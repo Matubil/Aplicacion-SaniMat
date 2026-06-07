@@ -295,7 +295,7 @@ VALUES
     ('24345678', 'Roberto', 'Fernández', 'Masculino', '1975-11-02', 'San Martín 850', '3515554444', 'roberto.fernandez@clinica.com'),
     ('27888999', 'Luciana', 'Pereyra', 'Femenino', '1988-09-18', 'Av. Córdoba 1200', '3516667777', 'luciana.pereyra@clinica.com'),
 
-    ('33444555', 'María', 'Sosa', 'Femenino', '1992-01-15', 'Rivadavia 500', '3513332222', 'maria.sosa@clinica.com'),
+    ('33444555', 'Pablo', 'Virgolini', 'Masculino', '1992-01-15', 'Rivadavia 500', '3513332222', 'pablo.virgolini@clinica.com'),
     ('34555666', 'Paula', 'Giménez', 'Femenino', '1995-06-21', 'Mitre 430', '3513331111', 'paula.gimenez@clinica.com'),
 
     ('25678345', 'Carlos', 'Gómez', 'Masculino', '1985-04-12', 'Av. Siempre Viva 123', '3514567890', 'carlos.gomez@mail.com'),
@@ -353,7 +353,7 @@ INSERT INTO secretarios (
     persona_id, usuario, contrasenia
 )
 VALUES
-    (5, 'secretaria1', 'hash_de_prueba_5'),
+    (5, 'PabloSecre', '12345'),
     (6, 'secretaria2', 'hash_de_prueba_6');
 
 -- =====================================================
