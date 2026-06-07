@@ -96,7 +96,7 @@ public class DashboardView {
     private Node doctorHome() {
         List<Turno> today = turnoService.search(null, LocalDate.now(), usuario);
         long waiting = today.stream().filter(t -> t.getEstado() == EstadoTurno.CONFIRMADO).count();
-        
+
         // El proximo paciente solo debe salir de turnos pendientes de atencion.
         // Los turnos finalizados, ausentes o cancelados ya no forman parte de la cola.
         String nextPatient = today.stream()

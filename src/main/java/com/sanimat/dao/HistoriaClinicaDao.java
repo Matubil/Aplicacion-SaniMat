@@ -15,7 +15,7 @@ import java.util.Optional;
 
 /**
    Acceso JDBC para historias clinicas.
-   Mantiene la lectura y escritura de entradas clinicas separada de la vista.
+   Mantiene la lectura, escritura y baja de historias clinicas separada de la vista.
  */
 public class HistoriaClinicaDao {
     private final DatabaseConfig databaseConfig;
@@ -85,6 +85,17 @@ public class HistoriaClinicaDao {
             insert(historia);
         } else {
             update(historia);
+        }
+    }
+
+    public void delete(int id) {
+        String sql = "DELETE FROM historias_clinicas WHERE historia_clinica_id = ?";
+        try (Connection connection = databaseConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, id);
+            statement.executeUpdate();
+        } catch (SQLException ex) {
+            throw new DaoException("No se pudo eliminar la historia clinica.", ex);
         }
     }
 

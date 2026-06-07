@@ -57,6 +57,7 @@ public class ClinicalHistoryView {
     private Button editHistoryButton;
     private Button saveHistoryButton;
     private Button cancelEditButton;
+    private Button deleteHistoryButton;
     private boolean editingHistory;
     private boolean creatingHistoryEntry;
 
@@ -92,6 +93,8 @@ public class ClinicalHistoryView {
         saveHistoryButton.setOnAction(event -> saveHistory());
         cancelEditButton = Ui.secondaryButton("Cancelar");
         cancelEditButton.setOnAction(event -> cancelHistoryEdit());
+        deleteHistoryButton = Ui.dangerButton("Eliminar historial");
+        deleteHistoryButton.setOnAction(event -> deleteHistory());
 
         // Contenedor horizontal para la barra de búsqueda. El campo de texto se expande para ocupar todo el espacio disponible.
         HBox filter = Ui.actions(filterField, searchButton);
@@ -113,6 +116,7 @@ public class ClinicalHistoryView {
         VBox actions = new VBox(10,
                 historyActions(createHistoryButton, editHistoryButton),
                 historyActions(saveHistoryButton, cancelEditButton),
+                historyActions(deleteHistoryButton),
                 historyActions(reportButton, prescriptionButton)
         );
 
@@ -308,6 +312,27 @@ public class ClinicalHistoryView {
         loadHistory();
     }
 
+    private void deleteHistory() {
+        if (selectedHistory == null) {
+            Dialogs.info("Historial clinico", "Seleccione un paciente con historial clinico para eliminar.");
+            return;
+        }
+        boolean confirmed = Dialogs.confirm(
+                "Historial clinico",
+                "Esta accion eliminara el historial clinico del paciente seleccionado. Desea continuar?"
+        );
+        if (!confirmed) {
+            return;
+        }
+        try {
+            historyService.delete(selectedHistory);
+            Dialogs.info("Historial clinico", "Historial clinico eliminado correctamente.");
+            loadHistory();
+        } catch (RuntimeException ex) {
+            Dialogs.error("Historial clinico", ex.getMessage());
+        }
+    }
+
     private void setHistoryEditing(boolean editing) {
         editingHistory = editing;
         historyArea.setEditable(editing);
@@ -334,6 +359,9 @@ public class ClinicalHistoryView {
         }
         if (cancelEditButton != null) {
             cancelEditButton.setDisable(!editingHistory);
+        }
+        if (deleteHistoryButton != null) {
+            deleteHistoryButton.setDisable(!hasHistory || editingHistory);
         }
     }
 
