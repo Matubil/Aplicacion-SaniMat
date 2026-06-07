@@ -5,7 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 /**
- * Vista simple para funcionalidades futuras que quedan fuera del prototipo.
+   Vista simple para funcionalidades futuras que quedan fuera del prototipo.
  */
 public class PlaceholderView {
     private final String title;

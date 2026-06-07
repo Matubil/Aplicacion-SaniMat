@@ -1,7 +1,7 @@
 package com.sanimat.model;
 
 /**
- * Tipo de cobertura del paciente.
+   Tipo de cobertura del paciente.
  */
 public enum TipoCobertura {
     PARTICULAR("Particular"),

@@ -3,7 +3,7 @@ package com.sanimat.model;
 import java.time.LocalDateTime;
 
 /**
- * Historia clinica asociada a un paciente.
+   Historia clinica asociada a un paciente.
  */
 public class HistoriaClinica {
     private int id;

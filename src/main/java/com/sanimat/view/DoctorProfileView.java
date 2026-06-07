@@ -17,7 +17,7 @@ import javafx.scene.layout.VBox;
 import java.time.LocalDate;
 
 /**
- * Pantalla donde el medico edita datos basicos de su propio perfil.
+   Pantalla donde el medico edita datos basicos de su propio perfil.
  */
 public class DoctorProfileView {
     private final MedicoService medicoService;
@@ -56,18 +56,23 @@ public class DoctorProfileView {
         Button saveButton = Ui.primaryButton("Guardar cambios");
         saveButton.setOnAction(event -> save());
 
+        // Tarjeta izquierda para datos personales editables (ancho elástico)
         VBox personalCard = Ui.card(Ui.sectionTitle("Datos personales"), personalGrid());
         personalCard.setMinWidth(520);
+        
+        // Tarjeta derecha para datos profesionales y de cuenta (ancho fijo/preferido)
         VBox professionalCard = Ui.card(Ui.sectionTitle("Datos profesionales"), professionalGrid(), Ui.actions(saveButton, reloadButton));
         professionalCard.setMinWidth(360);
         professionalCard.setPrefWidth(420);
 
+        // Contenedor horizontal de dos columnas
         HBox body = new HBox(18, personalCard, professionalCard);
         HBox.setHgrow(personalCard, javafx.scene.layout.Priority.ALWAYS);
         loadProfile();
         return Ui.page(Ui.pageTitle("Editar Perfil"), body);
     }
 
+    // Grid de dos columnas para agrupar campos personales
     private GridPane personalGrid() {
         GridPane grid = new GridPane();
         grid.setHgap(12);
@@ -83,6 +88,7 @@ public class DoctorProfileView {
         return grid;
     }
 
+    // Grid vertical de una sola columna para credenciales y datos no editables (Matrícula, Especialidad)
     private GridPane professionalGrid() {
         GridPane grid = new GridPane();
         grid.setHgap(12);

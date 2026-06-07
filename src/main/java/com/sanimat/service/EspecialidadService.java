@@ -8,8 +8,8 @@ import com.sanimat.util.Validator;
 import java.util.List;
 
 /**
- * Reglas de negocio para especialidades.
- * Valida datos y evita duplicados antes de guardar.
+   Reglas de negocio para especialidades.
+   Valida datos y evita duplicados antes de guardar.
  */
 public class EspecialidadService {
     private final EspecialidadDao especialidadDao;

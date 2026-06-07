@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Acceso JDBC para pagos registrados sobre turnos.
+   Acceso JDBC para pagos registrados sobre turnos.
  */
 public class PagoDao {
     private final DatabaseConfig databaseConfig;

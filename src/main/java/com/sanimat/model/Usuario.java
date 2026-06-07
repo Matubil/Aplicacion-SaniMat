@@ -1,8 +1,8 @@
 package com.sanimat.model;
 
 /**
- * Usuario autenticado en el sistema junto con su rol y posible relacion
- * con medico, paciente o secretario.
+   Usuario autenticado en el sistema junto con su rol y posible relacion
+   con medico, paciente o secretario.
  */
 public class Usuario {
     private int id;

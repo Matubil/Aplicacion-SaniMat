@@ -19,8 +19,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 /**
- * Pantalla de ingreso al sistema.
- * Solicita usuario y password y delega la validacion al controlador.
+   Pantalla de ingreso al sistema.
+   Solicita usuario y password y delega la validacion al controlador.
  */
 public class LoginView {
     private final MainApp app;
@@ -43,6 +43,7 @@ public class LoginView {
     private void build() {
         root.getStyleClass().add("login-shell");
 
+        // Panel de marca (lateral izquierdo): presentación visual del software
         VBox brand = new VBox(18);
         brand.getStyleClass().add("brand-panel");
         brand.setAlignment(Pos.CENTER_LEFT);
@@ -59,6 +60,7 @@ public class LoginView {
         brand.setPrefWidth(480);
         brand.setMaxWidth(540);
 
+        // Panel de formulario (lateral derecho): contenedor de los campos de entrada
         VBox form = new VBox(18);
         form.getStyleClass().add("login-card");
         form.setMinWidth(420);
@@ -93,10 +95,13 @@ public class LoginView {
                 statusLabel
         );
 
+        // Contenedor secundario para centrar perfectamente el login-card a la derecha
         VBox formArea = new VBox(form);
         formArea.getStyleClass().add("login-form-area");
         formArea.setAlignment(Pos.CENTER);
         HBox.setHgrow(formArea, Priority.ALWAYS);
+        
+        // Organiza el lateral izquierdo (marca) y lateral derecho (formulario centrado)
         HBox content = new HBox(brand, formArea);
         root.setCenter(content);
     }

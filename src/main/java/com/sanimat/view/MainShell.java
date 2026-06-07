@@ -32,8 +32,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Contenedor principal con barra lateral, barra superior y contenido central.
- * Decide que vistas mostrar segun el rol del usuario logueado.
+   Contenedor principal con barra lateral, barra superior y contenido central.
+   Decide que vistas mostrar segun el rol del usuario logueado.
  */
 public class MainShell extends BorderPane {
     private final MainApp app;
@@ -69,6 +69,7 @@ public class MainShell extends BorderPane {
         show("HOME");
     }
 
+    // Construye la barra de navegación lateral con lógica de control de acceso según el rol del usuario
     private Node sidebar() {
         VBox sidebar = new VBox(10);
         sidebar.getStyleClass().add("sidebar");
@@ -82,6 +83,7 @@ public class MainShell extends BorderPane {
         sidebar.getChildren().addAll(title, role, spacer(12));
 
         sidebar.getChildren().add(nav("Home", "HOME"));
+        
         // Cada rol ve solo las opciones que puede utilizar dentro del prototipo.
         if (usuario.hasRole(RoleName.SECRETARIA)) {
             sidebar.getChildren().add(nav("Turnos", "TURNOS"));
@@ -99,6 +101,7 @@ public class MainShell extends BorderPane {
             sidebar.getChildren().add(nav("Editar Perfil", "PERFIL"));
         }
 
+        // Region elástica para empujar el botón de logout al fondo de la barra
         Region fill = new Region();
         VBox.setVgrow(fill, Priority.ALWAYS);
         Button logout = navButton("Cerrar sesión");
@@ -128,6 +131,7 @@ public class MainShell extends BorderPane {
         return button;
     }
 
+    // Enrutador de la aplicación: carga e inyecta dinámicamente la vista seleccionada en la zona central
     private void show(String key) {
         activate(key);
         Node content = switch (key) {
@@ -139,7 +143,7 @@ public class MainShell extends BorderPane {
             case "HISTORIAS" -> new ClinicalHistoryView(historiaClinicaService, pacienteService, usuario).getRoot();
             case "RECETA" -> new PlaceholderView(
                     "Generar receta",
-                    "La generación de recetas no forma parte del alcance implementado en esta versión del prototipo. Queda contemplada como una posible ampliación futura del sistema."
+                    "La generación de recetas no forma parte del alcance implementado en esta versión del prototipo. Queda contemplada como una posible ampliacion futura del sistema."
             ).getRoot();
             case "PERFIL" -> new DoctorProfileView(medicoService, usuario, this::refreshUserLabel).getRoot();
             default -> new DashboardView(usuario, turnoService, pacienteService, medicoService, pagoService, this::show).getRoot();
@@ -157,6 +161,7 @@ public class MainShell extends BorderPane {
         return usuario.getNombreCompleto() == null ? usuario.getUsername() : usuario.getNombreCompleto();
     }
 
+    // Contenedor scrollable que envuelve a la vista inyectada para evitar desbordes en pantallas chicas
     private ScrollPane scrollable(Node content) {
         ScrollPane scrollPane = new ScrollPane(content);
         scrollPane.getStyleClass().add("content-scroll");

@@ -8,7 +8,7 @@ import com.sanimat.util.Validator;
 import java.util.List;
 
 /**
- * Reglas para crear, consultar y modificar historias clinicas.
+   Reglas para crear, consultar y modificar historias clinicas.
  */
 public class HistoriaClinicaService {
     private final HistoriaClinicaDao historiaClinicaDao;

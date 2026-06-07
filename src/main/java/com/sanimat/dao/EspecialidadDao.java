@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Acceso JDBC para especialidades: busqueda, alta, modificacion y baja.
+   Acceso JDBC para especialidades: busqueda, alta, modificacion y baja.
  */
 public class EspecialidadDao {
     private final DatabaseConfig databaseConfig;

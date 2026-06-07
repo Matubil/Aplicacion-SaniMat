@@ -1,7 +1,7 @@
 package com.sanimat.model;
 
 /**
- * Rol asignado a un usuario.
+   Rol asignado a un usuario.
  */
 public class Rol {
     private int id;

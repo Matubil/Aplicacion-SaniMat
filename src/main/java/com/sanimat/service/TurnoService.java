@@ -16,8 +16,8 @@ import java.time.LocalTime;
 import java.util.List;
 
 /**
- * Reglas de negocio para turnos.
- * Controla disponibilidad, estados permitidos y permisos segun rol.
+   Reglas de negocio para turnos.
+   Controla disponibilidad, estados permitidos y permisos segun rol.
  */
 public class TurnoService {
     private final TurnoDao turnoDao;

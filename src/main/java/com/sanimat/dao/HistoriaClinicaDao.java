@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Acceso JDBC para historias clinicas.
- * Mantiene la lectura y escritura de entradas clinicas separada de la vista.
+   Acceso JDBC para historias clinicas.
+   Mantiene la lectura y escritura de entradas clinicas separada de la vista.
  */
 public class HistoriaClinicaDao {
     private final DatabaseConfig databaseConfig;

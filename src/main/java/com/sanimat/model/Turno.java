@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Turno medico agendado.
- * Combina datos propios del turno con nombres auxiliares para mostrar en tablas.
+   Turno medico agendado.
+   Combina datos propios del turno con nombres auxiliares para mostrar en tablas.
  */
 public class Turno {
     private static final DateTimeFormatter DISPLAY_DATE_TIME = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
