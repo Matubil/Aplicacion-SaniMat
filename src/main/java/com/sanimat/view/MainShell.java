@@ -78,7 +78,7 @@ public class MainShell extends BorderPane {
 
         Label title = new Label("SaniMat Clinic");
         title.getStyleClass().add("sidebar-title");
-        Label role = new Label(usuario.getRol().getNombre().getDisplayName() + " Terminal");
+        Label role = new Label(" Terminal de " + usuario.getRol().getNombre().getDisplayName() );
         role.getStyleClass().add("sidebar-role");
         sidebar.getChildren().addAll(title, role, spacer(12));
 
