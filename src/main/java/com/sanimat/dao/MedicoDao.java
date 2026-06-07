@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Acceso JDBC para medicos y sus horarios laborales.
- * Las operaciones de guardado usan transaccion porque afectan varias tablas.
+   Acceso JDBC para medicos y sus horarios laborales.
+   Las operaciones de guardado usan transaccion porque afectan varias tablas.
  */
 public class MedicoDao {
     private final DatabaseConfig databaseConfig;

@@ -24,8 +24,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
- * Pantalla de pagos.
- * Lista turnos pendientes, calcula monto esperado y registra pagos completos.
+   Pantalla de pagos.
+   Lista turnos pendientes, calcula monto esperado y registra pagos completos.
  */
 public class PaymentView {
     private final PagoService service;
@@ -48,15 +48,19 @@ public class PaymentView {
     }
 
     public Node getRoot() {
+        // Inicializa tablas y combo box de turnos sin pago
         configureTable();
         configurePendingTable();
         configureAppointmentCombo();
+        
         appointmentCombo.setMaxWidth(Double.MAX_VALUE);
         appointmentCombo.valueProperty().addListener((obs, old, value) -> selectAppointment(value));
         paymentMethodCombo.setMaxWidth(Double.MAX_VALUE);
         paymentMethodCombo.valueProperty().addListener((obs, old, value) -> updatePaymentSummary());
         paymentDatePicker.setMaxWidth(Double.MAX_VALUE);
         Ui.configureDatePicker(paymentDatePicker);
+        
+        // Configura el visor del desglose de precios (tarjeta resumen de descuento)
         summaryArea.setEditable(false);
         summaryArea.setFocusTraversable(false);
         summaryArea.setPrefRowCount(4);
@@ -71,12 +75,18 @@ public class PaymentView {
 
         Ui.compactTable(pendingTable, 7);
         Ui.compactTable(table, 7);
+        
+        // Tarjeta lateral izquierda que agrupa la tabla de pendientes de pago y la de pagos ya registrados
         VBox pendingCard = Ui.card(Ui.sectionTitle("Turnos pendientes de pago"), refreshButton, pendingTable);
         VBox tableCard = Ui.card(Ui.sectionTitle("Pagos registrados"), table);
         VBox tables = new VBox(18, pendingCard, tableCard);
+        
+        // Formulario derecho para ingresar los datos del pago y ver el desglose en tiempo real
         VBox form = Ui.card(Ui.sectionTitle("Registro de pago"), summaryArea, formGrid(), Ui.actionStack(saveButton));
         form.setMinWidth(380);
         form.setPrefWidth(420);
+        
+        // Contenedor principal horizontal
         HBox body = new HBox(18, tables, form);
         HBox.setHgrow(tables, Priority.ALWAYS);
         clearForm();
@@ -94,6 +104,7 @@ public class PaymentView {
         );
     }
 
+    // Configura la tabla intermedia de turnos pendientes, asignando el listener para autocompletar el formulario
     private void configurePendingTable() {
         pendingTable.getColumns().setAll(
                 Ui.column("Paciente", Turno::getPacienteNombre, 160),
@@ -111,6 +122,7 @@ public class PaymentView {
         appointmentCombo.setButtonCell(appointmentCell());
     }
 
+    // Retorna una celda personalizada con ajuste de texto para renderizar los turnos de manera legible en el ComboBox
     private ListCell<Turno> appointmentCell() {
         return new ListCell<>() {
             @Override

@@ -3,7 +3,7 @@ package com.sanimat.model;
 import java.time.LocalTime;
 
 /**
- * Rango horario en el que un medico atiende un dia determinado.
+   Rango horario en el que un medico atiende un dia determinado.
  */
 public class HorarioMedico {
     private int id;

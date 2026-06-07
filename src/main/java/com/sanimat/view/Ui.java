@@ -29,8 +29,8 @@ import java.time.format.ResolverStyle;
 import java.util.function.Function;
 
 /**
- * Fabrica de componentes visuales reutilizables.
- * Mantiene estilos, botones, tablas y DatePicker consistentes entre pantallas.
+   Fabrica de componentes visuales reutilizables.
+   Mantiene estilos, botones, tablas y DatePicker consistentes entre pantallas.
  */
 public final class Ui {
     private static final LocalDate MIN_DOCTOR_BIRTH_DATE = LocalDate.of(1940, 1, 1);
@@ -123,7 +123,7 @@ public final class Ui {
         return box;
     }
 
-    public static VBox splitActions(Button left, Button right, Button danger) {
+    /**public static VBox splitActions(Button left, Button right, Button danger) {
         HBox mainActions = new HBox(10, left, right);
         mainActions.setAlignment(Pos.CENTER_LEFT);
         for (Button button : new Button[]{left, right}) {
@@ -132,7 +132,7 @@ public final class Ui {
         }
         danger.setMaxWidth(Double.MAX_VALUE);
         return new VBox(10, mainActions, danger);
-    }
+    }*/
 
     public static void compactTable(TableView<?> table, int visibleRows) {
         table.setFixedCellSize(28);

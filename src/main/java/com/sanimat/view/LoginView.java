@@ -23,8 +23,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 /**
- * Pantalla de ingreso al sistema.
- * Permite iniciar sesion y configurar la conexion JDBC a PostgreSQL.
+   Pantalla de ingreso al sistema.
+   Solicita usuario y password y delega la validacion al controlador.
  */
 public class LoginView {
     private final MainApp app;
@@ -69,6 +69,7 @@ public class LoginView {
     }
 
     private VBox buildBrandPanel() {
+        // Panel de marca (lateral izquierdo): presentación visual del software
         VBox brand = new VBox(18);
         brand.getStyleClass().add("brand-panel");
         brand.setAlignment(Pos.CENTER_LEFT);
@@ -90,6 +91,7 @@ public class LoginView {
     }
 
     private void showLoginForm() {
+        // Panel de formulario (lateral derecho): contenedor de los campos de entrada
         VBox form = new VBox(18);
         form.getStyleClass().add("login-card");
         form.setMinWidth(420);

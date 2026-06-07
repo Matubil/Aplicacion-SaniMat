@@ -1,7 +1,7 @@
 package com.sanimat.model;
 
 /**
- * Secretario o secretaria que administra agenda, pacientes, pagos y medicos.
+   Secretario o secretaria que administra agenda, pacientes, pagos y medicos.
  */
 public class Secretario extends Persona {
     private int secretarioId;

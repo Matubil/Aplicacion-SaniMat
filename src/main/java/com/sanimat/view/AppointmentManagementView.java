@@ -34,8 +34,8 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Pantalla de gestion de turnos.
- * Secretaria administra la agenda completa; medico solo actualiza atencion.
+   Pantalla de gestion de turnos.
+   Secretaria administra la agenda completa; medico solo actualiza atencion.
  */
 public class AppointmentManagementView {
     private final TurnoService turnoService;
@@ -73,14 +73,19 @@ public class AppointmentManagementView {
     }
 
     public Node getRoot() {
+        // Inicializa la configuración de las tablas de turnos activos y cerrados
         configureTable();
         configureClosedTable();
+        
+        // Carga los combos con médicos y pacientes, y configura controles de fecha y hora
         patientCombo.setItems(FXCollections.observableArrayList(pacienteService.findAll(null)));
         doctorCombo.setItems(FXCollections.observableArrayList(medicoService.findAll(null)));
         Ui.configureDatePicker(filterDatePicker);
         Ui.configureDatePicker(datePicker);
         configureTimeCombo();
         configureScheduleControls();
+        
+        // Ajusta el ancho horizontal elástico para evitar recortes visuales
         patientCombo.setMaxWidth(Double.MAX_VALUE);
         doctorCombo.setMaxWidth(Double.MAX_VALUE);
         datePicker.setMaxWidth(Double.MAX_VALUE);
@@ -96,6 +101,8 @@ public class AppointmentManagementView {
             filterDatePicker.setValue(usuario.hasRole(RoleName.MEDICO) ? LocalDate.now() : null);
             load();
         });
+        
+        // Barra horizontal de búsqueda y filtros
         HBox filters = Ui.actions(
                 Ui.fieldLabel(usuario.hasRole(RoleName.MEDICO) ? "Filtrar paciente" : "Filtrar paciente/medico"),
                 searchField,
@@ -103,20 +110,22 @@ public class AppointmentManagementView {
                 searchButton,
                 clearFilterButton
         );
-        HBox.setHgrow(searchField, Priority.ALWAYS);
+        HBox.setHgrow(searchField, Priority.ALWAYS); // Hace que el campo de búsqueda se expanda para rellenar la barra
 
+        // VISTA MÉDICO: El médico ve la agenda dividida en turnos del día activos (arriba) y cerrados (abajo)
         if (usuario.hasRole(RoleName.MEDICO)) {
-            // El medico trabaja sobre sus turnos del dia: arriba quedan los pendientes
-            // y abajo los que ya fueron cerrados por estado.
             filterDatePicker.setValue(LocalDate.now());
             Ui.compactTable(table, 7);
             Ui.compactTable(closedTable, 7);
             doctorSaveStatusButton = Ui.primaryButton("Guardar estado");
             doctorSaveStatusButton.setOnAction(event -> saveDoctorStatus());
+            
             VBox confirmedCard = Ui.card(Ui.sectionTitle("Turnos confirmados del dia"), filters, table);
             VBox closedCard = Ui.card(Ui.sectionTitle("Turnos cerrados del dia"), closedTable);
             VBox tables = new VBox(18, confirmedCard, closedCard);
             tables.setMinWidth(560);
+            
+            // Formulario lateral para actualizar el estado del turno atendido (Finalizado / Ausente)
             VBox statusForm = Ui.card(
                     Ui.sectionTitle("Actualizar atencion"),
                     Ui.formRow("Nuevo estado", doctorStatusCombo),
@@ -124,6 +133,7 @@ public class AppointmentManagementView {
             );
             statusForm.setMinWidth(300);
             statusForm.setPrefWidth(330);
+            
             HBox body = new HBox(18, tables, statusForm);
             HBox.setHgrow(tables, Priority.ALWAYS);
             clearDoctorStatus();
@@ -131,6 +141,7 @@ public class AppointmentManagementView {
             return Ui.page(Ui.pageTitle("Mis turnos"), body);
         }
 
+        // VISTA SECRETARIA: Gestión general de turnos (Crear, Modificar, Cancelar)
         Button newButton = Ui.secondaryButton("Nuevo");
         newButton.setOnAction(event -> startCreate());
         editButton = Ui.secondaryButton("Modificar");
@@ -143,9 +154,12 @@ public class AppointmentManagementView {
         Ui.compactTable(table, 16);
         VBox tableCard = Ui.card(Ui.sectionTitle("Turnos"), filters, table);
         tableCard.setMinWidth(560);
+        
+        // Formulario derecho para ingreso y modificación de datos del turno
         VBox form = Ui.card(Ui.sectionTitle("Datos del turno"), formGrid(), appointmentActions(newButton, editButton, saveButton, cancelButton));
         form.setMinWidth(300);
         form.setPrefWidth(330);
+        
         HBox body = new HBox(18, tableCard, form);
         HBox.setHgrow(tableCard, Priority.ALWAYS);
         clearForm();
@@ -435,20 +449,22 @@ public class AppointmentManagementView {
         }
     }
 
+    // Enlaza la selección del médico y la fecha para recalcular la disponibilidad de turnos en tiempo real
     private void configureScheduleControls() {
         doctorCombo.valueProperty().addListener((obs, old, value) -> {
-            loadSelectedDoctorSchedules(value);
-            configureDatePickerDays();
+            loadSelectedDoctorSchedules(value); // Carga la lista de días laborales del médico
+            configureDatePickerDays();          // Restringe las fechas habilitadas en el DatePicker
             if (datePicker.getValue() != null && !worksOnDate(datePicker.getValue())) {
-                datePicker.setValue(null);
+                datePicker.setValue(null);       // Resetea fecha si el nuevo médico no trabaja ese día
             } else {
-                updateTimeOptions();
+                updateTimeOptions();             // Actualiza las horas disponibles si trabaja
             }
         });
         datePicker.valueProperty().addListener((obs, old, value) -> updateTimeOptions());
         configureDatePickerDays();
     }
 
+    // Deshabilita los días en los que el médico no trabaja, y pinta de color celeste (#e8f3ff) los días laborables disponibles
     private void configureDatePickerDays() {
         datePicker.setDayCellFactory(picker -> new DateCell() {
             @Override
@@ -462,7 +478,7 @@ public class AppointmentManagementView {
                 setDisable(disabled);
                 setStyle("");
                 if (!disabled) {
-                    setStyle("-fx-background-color: #e8f3ff;");
+                    setStyle("-fx-background-color: #e8f3ff;"); // Resalta visualmente los días laborables habilitados
                 }
             }
         });

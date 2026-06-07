@@ -10,8 +10,8 @@ import com.sanimat.util.Validator;
 import java.util.List;
 
 /**
- * Reglas de negocio para pacientes.
- * Valida datos personales y controla dependencias antes de eliminar.
+   Reglas de negocio para pacientes.
+   Valida datos personales y controla dependencias antes de eliminar.
  */
 public class PacienteService {
     private final PacienteDao pacienteDao;

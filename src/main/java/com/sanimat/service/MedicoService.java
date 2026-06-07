@@ -12,8 +12,8 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Reglas de negocio para medicos.
- * Valida datos personales, matricula, usuario y horarios laborales.
+   Reglas de negocio para medicos.
+   Valida datos personales, matricula, usuario y horarios laborales.
  */
 public class MedicoService {
     private final MedicoDao medicoDao;
@@ -94,6 +94,7 @@ public class MedicoService {
             validateHalfHour(horario.getHoraHasta());
             horario.setActivo(true);
         }
+
         // Ordena por dia y hora para detectar rangos superpuestos de manera simple.
         List<HorarioMedico> sorted = horarios.stream()
                 .sorted(Comparator.comparingInt(HorarioMedico::getDiaSemana)

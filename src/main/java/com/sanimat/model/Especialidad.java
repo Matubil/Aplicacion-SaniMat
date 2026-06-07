@@ -1,7 +1,7 @@
 package com.sanimat.model;
 
 /**
- * Especialidad medica disponible para asociar a medicos.
+   Especialidad medica disponible para asociar a medicos.
  */
 public class Especialidad {
     private int id;

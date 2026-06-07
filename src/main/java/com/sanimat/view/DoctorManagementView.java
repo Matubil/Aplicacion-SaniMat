@@ -27,8 +27,8 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Pantalla de gestion de medicos para secretaria.
- * Incluye datos personales, especialidad y horarios laborales.
+   Pantalla de gestion de medicos para secretaria.
+   Incluye datos personales, especialidad y horarios laborales.
  */
 public class DoctorManagementView {
     private final MedicoService medicoService;
@@ -67,8 +67,11 @@ public class DoctorManagementView {
     }
 
     public Node getRoot() {
+        // Inicializa la configuración de la tabla principal y la de horarios
         configureTable();
         configureScheduleTable();
+        
+        // Carga especialidades en el combo y configura anchos máximos elásticos
         specialtyCombo.setItems(FXCollections.observableArrayList(especialidadService.findAll(null)));
         specialtyCombo.setMaxWidth(Double.MAX_VALUE);
         genderCombo.setMaxWidth(Double.MAX_VALUE);
@@ -77,6 +80,8 @@ public class DoctorManagementView {
         scheduleDayCombo.setMaxWidth(Double.MAX_VALUE);
         scheduleStartCombo.setMaxWidth(Double.MAX_VALUE);
         scheduleEndCombo.setMaxWidth(Double.MAX_VALUE);
+        
+        // Restricciones de entrada de datos en los campos de texto
         Ui.digitsOnly(dniField, 8);
         Ui.digitsOnly(licenseField, 9);
         Ui.phoneOnly(phoneField);
@@ -96,19 +101,28 @@ public class DoctorManagementView {
         removeScheduleButton = Ui.dangerButton("Quitar horario");
         removeScheduleButton.setOnAction(event -> removeSchedule());
 
+        // Panel de estadísticas superiores (KPIs) sobre el personal
         HBox summary = new HBox(14,
                 Ui.card(Ui.fieldLabel("Total de personal"), Ui.sectionTitle(String.valueOf(medicoService.findAll(null).size()))),
                 Ui.card(Ui.fieldLabel("Atendiendo"), Ui.sectionTitle("0"))
         );
+        
+        // Panel de filtrado horizontal
         HBox filters = Ui.actions(Ui.fieldLabel("Buscar"), searchField, searchButton);
-        HBox.setHgrow(searchField, Priority.ALWAYS);
+        HBox.setHgrow(searchField, Priority.ALWAYS); // Campo de búsqueda crece horizontalmente
+        
         Ui.compactTable(table, 14);
+        
+        // Tarjeta lateral izquierda que contiene la tabla principal de médicos
         VBox tableCard = Ui.card(Ui.sectionTitle("Gestion Medica"), summary, filters, table);
         tableCard.setMinWidth(560);
 
+        // Tarjeta lateral derecha que conforma el formulario de edición (datos personales + horarios + acciones)
         VBox form = Ui.card(Ui.sectionTitle("Datos del medico"), formGrid(), scheduleSection(), doctorActions(newButton, editButton, saveButton, deleteButton));
         form.setMinWidth(420);
         form.setPrefWidth(460);
+        
+        // Contenedor general que organiza la pantalla en dos columnas y ajusta el crecimiento
         HBox body = new HBox(18, tableCard, form);
         HBox.setHgrow(tableCard, Priority.ALWAYS);
         load();
@@ -116,6 +130,7 @@ public class DoctorManagementView {
         return Ui.page(Ui.pageTitle("Gestion de medicos"), body);
     }
 
+    // Configura columnas y listeners de selección para la tabla de médicos
     private void configureTable() {
         table.getColumns().setAll(
                 Ui.column("ID", Medico::getMedicoId, 70),
@@ -127,6 +142,7 @@ public class DoctorManagementView {
         table.getSelectionModel().selectedItemProperty().addListener((obs, old, value) -> fillForm(value));
     }
 
+    // Configura columnas y formato visual para la tabla interna de horarios laborales del médico
     private void configureScheduleTable() {
         scheduleTable.getColumns().setAll(
                 Ui.column("Dia", h -> dayLabel(h.getDiaSemana()), 110),
@@ -137,6 +153,7 @@ public class DoctorManagementView {
         Ui.compactTable(scheduleTable, 5);
     }
 
+    // Construye un grid ordenado de dos columnas para los campos de datos del formulario del médico
     private GridPane formGrid() {
         GridPane grid = new GridPane();
         grid.setHgap(12);
@@ -156,6 +173,7 @@ public class DoctorManagementView {
         return grid;
     }
 
+    // Contenedor para agrupar y homogeneizar el ancho de los botones principales del formulario
     private VBox doctorActions(Button newButton, Button editButton, Button saveButton, Button deleteButton) {
         HBox mainActions = new HBox(10, newButton, editButton);
         mainActions.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
@@ -168,6 +186,7 @@ public class DoctorManagementView {
         return new VBox(10, mainActions, saveButton, deleteButton);
     }
 
+    // Sección interna de gestión de horarios del médico, que cuenta con su propio grid, botones y tabla compacta
     private VBox scheduleSection() {
         GridPane grid = new GridPane();
         grid.setHgap(12);

@@ -3,7 +3,7 @@ package com.sanimat.model;
 import java.time.LocalDate;
 
 /**
- * Clase base para entidades que comparten datos personales.
+   Clase base para entidades que comparten datos personales.
  */
 public class Persona {
     private int id;

@@ -1,8 +1,8 @@
 package com.sanimat.model;
 
 /**
- * Paciente atendido por la clinica.
- * Extiende Persona y agrega datos de cobertura medica.
+   Paciente atendido por la clinica.
+   Extiende Persona y agrega datos de cobertura medica.
  */
 public class Paciente extends Persona {
     private int pacienteId;
