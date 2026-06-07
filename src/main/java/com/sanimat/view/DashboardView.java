@@ -54,6 +54,7 @@ public class DashboardView {
     }
 
     public Node getRoot() {
+
         // Deriva la pantalla de inicio según el rol asignado al usuario
         return usuario.hasRole(RoleName.MEDICO) ? doctorHome() : secretaryHome();
     }
@@ -69,8 +70,7 @@ public class DashboardView {
                 .distinct()
                 .count();
 
-        // FlowPane organiza las tarjetas/ cards de forma fluida según el ancho
-        // disponible
+        // FlowPane organiza las tarjetas/ cards de forma fluida según el ancho disponible
         FlowPane metrics = metrics(
                 metric("Total de turnos en el dia", String.valueOf(today.size())),
                 metric("Pacientes con turno hoy", String.valueOf(patientsWithAppointmentToday)),
@@ -92,15 +92,15 @@ public class DashboardView {
         return Ui.page(Ui.pageTitle("Bienvenida " + firstName()), body);
     }
 
-    // Retorna la pantalla de inicio para el Médico con métricas de su agenda de hoy
-    // y cola de espera
+    // Retorna la pantalla de inicio para el Médico con métricas de su agenda de hoy y cola de espera
     private Node doctorHome() {
-        List<Turno> all = turnoService.search(null, null, usuario);
         List<Turno> today = turnoService.search(null, LocalDate.now(), usuario);
-        long waiting = all.stream().filter(t -> t.getEstado() == EstadoTurno.CONFIRMADO).count();
-        String nextPatient = all.stream()
-                .filter(t -> t.getFechaHora().toLocalDate().isEqual(LocalDate.now())
-                        || t.getFechaHora().toLocalDate().isAfter(LocalDate.now()))
+        long waiting = today.stream().filter(t -> t.getEstado() == EstadoTurno.CONFIRMADO).count();
+        
+        // El proximo paciente solo debe salir de turnos pendientes de atencion.
+        // Los turnos finalizados, ausentes o cancelados ya no forman parte de la cola.
+        String nextPatient = today.stream()
+                .filter(t -> t.getEstado() == EstadoTurno.CONFIRMADO)
                 .min(Comparator.comparing(Turno::getFechaHora))
                 .map(Turno::getPacienteNombre)
                 .orElse("-");
@@ -110,7 +110,7 @@ public class DashboardView {
                 metric("Total de turnos en el dia", String.valueOf(today.size())),
                 metric("En espera", String.valueOf(waiting)),
                 metric("Proximo paciente", nextPatient));
-        TableView<Turno> table = appointmentTable(all.stream().limit(12).toList());
+        TableView<Turno> table = appointmentTable(today.stream().limit(12).toList());
         VBox body = new VBox(18, metrics, table);
         return Ui.page(Ui.pageTitle("Bienvenido " + firstName()), body);
     }
