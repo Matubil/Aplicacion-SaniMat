@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Acceso JDBC para pacientes y datos personales asociados.
+   Acceso JDBC para pacientes y datos personales asociados.
  */
 public class PacienteDao {
     private final DatabaseConfig databaseConfig;

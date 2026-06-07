@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
 /**
- * Reglas de validacion reutilizables por los servicios y vistas.
+   Reglas de validacion reutilizables por los servicios y vistas.
  */
 public final class Validator {
     private static final LocalDate MIN_PATIENT_BIRTH_DATE = LocalDate.of(1900, 1, 1);

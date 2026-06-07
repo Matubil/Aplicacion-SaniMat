@@ -3,8 +3,8 @@ package com.sanimat.model;
 import java.util.List;
 
 /**
- * Medico del sistema.
- * Incluye matricula, usuario de acceso, especialidad y horarios laborales.
+   Medico del sistema.
+   Incluye matricula, usuario de acceso, especialidad y horarios laborales.
  */
 public class Medico extends Persona {
     private int medicoId;

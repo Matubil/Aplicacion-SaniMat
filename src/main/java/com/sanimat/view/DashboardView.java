@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * Pantalla inicial despues del login.
- * Muestra metricas y accesos rapidos distintos segun el rol del usuario.
+   Pantalla inicial despues del login.
+   Muestra metricas y accesos rapidos distintos segun el rol del usuario.
  */
 public class DashboardView {
     private static final DateTimeFormatter TIME = DateTimeFormatter.ofPattern("HH:mm");
@@ -55,9 +55,11 @@ public class DashboardView {
     }
 
     public Node getRoot() {
+        // Deriva la pantalla de inicio según el rol asignado al usuario
         return usuario.hasRole(RoleName.MEDICO) ? doctorHome() : secretaryHome();
     }
 
+    // Retorna la pantalla de inicio para la Secretaria con accesos rápidos y métricas globales
     private Node secretaryHome() {
         List<Turno> today = turnoService.search(null, LocalDate.now(), usuario);
         List<Turno> all = turnoService.search(null, null, usuario);
@@ -67,6 +69,7 @@ public class DashboardView {
                 .distinct()
                 .count();
 
+        // FlowPane organiza las tarjetas de KPIs de forma fluida según el ancho disponible
         FlowPane metrics = metrics(
                 metric("Total de turnos en el dia", String.valueOf(today.size())),
                 metric("Pacientes con turno hoy", String.valueOf(patientsWithAppointmentToday)),
@@ -88,6 +91,7 @@ public class DashboardView {
         return Ui.page(Ui.pageTitle("Bienvenida " + firstName()), body);
     }
 
+    // Retorna la pantalla de inicio para el Médico con métricas de su agenda de hoy y cola de espera
     private Node doctorHome() {
         List<Turno> all = turnoService.search(null, null, usuario);
         List<Turno> today = turnoService.search(null, LocalDate.now(), usuario);
@@ -98,6 +102,7 @@ public class DashboardView {
                 .map(Turno::getPacienteNombre)
                 .orElse("-");
 
+        // Tarjetas de métricas fluidas para la agenda médica
         FlowPane metrics = metrics(
                 metric("Total de turnos en el dia", String.valueOf(today.size())),
                 metric("En espera", String.valueOf(waiting)),
@@ -108,6 +113,7 @@ public class DashboardView {
         return Ui.page(Ui.pageTitle("Bienvenido " + firstName()), body);
     }
 
+    // Contenedor FlowPane para que las tarjetas de KPIs hagan wrap automáticamente
     private FlowPane metrics(VBox... cards) {
         FlowPane pane = new FlowPane(18, 18, cards);
         pane.setPrefWrapLength(900);

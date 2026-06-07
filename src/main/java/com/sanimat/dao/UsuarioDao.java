@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 /**
- * Acceso JDBC para autenticar usuarios y resolver su rol dentro del sistema.
+   Acceso JDBC para autenticar usuarios y resolver su rol dentro del sistema.
  */
 public class UsuarioDao {
     private final DatabaseConfig databaseConfig;

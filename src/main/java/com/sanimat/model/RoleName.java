@@ -1,7 +1,7 @@
 package com.sanimat.model;
 
 /**
- * Roles funcionales usados para habilitar menues y permisos.
+   Roles funcionales usados para habilitar menues y permisos.
  */
 public enum RoleName {
     SECRETARIA("Secretaria"),

@@ -7,8 +7,8 @@ import com.sanimat.util.ValidationException;
 import com.sanimat.util.Validator;
 
 /**
- * Servicio de autenticacion.
- * Valida credenciales y devuelve el usuario con sus datos de rol.
+   Servicio de autenticacion.
+   Valida credenciales y devuelve el usuario con sus datos de rol.
  */
 public class AuthService {
     private final UsuarioDao usuarioDao;

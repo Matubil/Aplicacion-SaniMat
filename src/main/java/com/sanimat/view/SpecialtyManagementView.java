@@ -16,7 +16,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 /**
- * Pantalla de gestion de especialidades para secretaria.
+   Pantalla de gestion de especialidades para secretaria.
  */
 public class SpecialtyManagementView {
     private final EspecialidadService service;
@@ -36,7 +36,9 @@ public class SpecialtyManagementView {
     }
 
     public Node getRoot() {
+        // Inicializa y enlaza la tabla de especialidades
         configureTable();
+        
         Button searchButton = Ui.secondaryButton("Buscar");
         searchButton.setOnAction(event -> load());
         Button newButton = Ui.secondaryButton("Nuevo");
@@ -48,8 +50,11 @@ public class SpecialtyManagementView {
         deleteButton = Ui.dangerButton("Eliminar");
         deleteButton.setOnAction(event -> delete());
 
+        // Barra de búsqueda con alineación horizontal
         HBox filters = Ui.actions(searchField, searchButton);
-        HBox.setHgrow(searchField, Priority.ALWAYS);
+        HBox.setHgrow(searchField, Priority.ALWAYS); // Campo de búsqueda crece horizontalmente
+        
+        // Tarjeta derecha con el formulario de especialidades
         VBox form = Ui.card(
                 Ui.sectionTitle("Datos de especialidad"),
                 Ui.formRow("Nombre", nameField),
@@ -57,12 +62,17 @@ public class SpecialtyManagementView {
                 specialtyActions(newButton, editButton, saveButton, deleteButton)
         );
         Ui.compactTable(table, 12);
+        
+        // Tarjeta izquierda con la grilla de especialidades registradas
         VBox tableCard = Ui.card(Ui.sectionTitle("Especialidades"), filters, table);
         tableCard.setMinWidth(560);
+        
+        // Contenedor principal que organiza la vista en dos paneles
         HBox body = new HBox(18, tableCard, form);
         HBox.setHgrow(tableCard, Priority.ALWAYS);
         form.setMinWidth(330);
         form.setPrefWidth(360);
+        
         load();
         clearForm();
         return Ui.page(Ui.pageTitle("Gestion de especialidades"), body);

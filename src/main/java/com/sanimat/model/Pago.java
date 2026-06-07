@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * Pago registrado para un turno.
+   Pago registrado para un turno.
  */
 public class Pago {
     private int id;

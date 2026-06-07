@@ -1,7 +1,7 @@
 package com.sanimat.model;
 
 /**
- * Estados posibles de un turno dentro del prototipo.
+   Estados posibles de un turno dentro del prototipo.
  */
 public enum EstadoTurno {
     CONFIRMADO("Confirmado"),

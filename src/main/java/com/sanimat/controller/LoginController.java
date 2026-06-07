@@ -5,7 +5,7 @@ import com.sanimat.model.Usuario;
 import com.sanimat.service.AuthService;
 
 /**
- * Controlador minimo para autenticar usuarios desde la pantalla de login.
+   Controlador minimo para autenticar usuarios desde la pantalla de login.
  */
 public class LoginController {
     private final AuthService authService;

@@ -1,7 +1,7 @@
 package com.sanimat.model;
 
 /**
- * Medios de pago admitidos por el sistema.
+   Medios de pago admitidos por el sistema.
  */
 public enum MedioPago {
     EFECTIVO("Efectivo"),

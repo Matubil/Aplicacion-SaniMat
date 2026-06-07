@@ -21,8 +21,8 @@ import javafx.scene.layout.VBox;
 import java.time.LocalDate;
 
 /**
- * Pantalla de gestion de pacientes para secretaria.
- * Usa modo lectura por defecto y habilita edicion solo con Nuevo o Modificar.
+   Pantalla de gestion de pacientes para secretaria.
+   Usa modo lectura por defecto y habilita edicion solo con Nuevo o Modificar.
  */
 public class PatientManagementView {
     private final PacienteService service;
@@ -50,10 +50,16 @@ public class PatientManagementView {
     }
 
     public Node getRoot() {
+        // Inicializa la configuración de la tabla
         configureTable();
+        
+        // Restricciones de formato sobre DNI y teléfono
         Ui.digitsOnly(dniField, 8);
         Ui.phoneOnly(phoneField);
+        
+        // Listener de cobertura para habilitar o deshabilitar dinámicamente el campo de número de afiliado
         coverageCombo.valueProperty().addListener((obs, old, value) -> updateAffiliateState(editing));
+        
         Button searchButton = Ui.secondaryButton("Buscar");
         searchButton.setOnAction(event -> load());
         Button newButton = Ui.secondaryButton("Nuevo");
@@ -68,13 +74,19 @@ public class PatientManagementView {
         HBox filters = Ui.actions(searchField, searchButton);
         HBox.setHgrow(searchField, Priority.ALWAYS);
         Ui.compactTable(table, 14);
+        
+        // Tarjeta izquierda con la grilla general de pacientes
         VBox tableCard = Ui.card(Ui.sectionTitle("Pacientes registrados"), filters, table);
         tableCard.setMinWidth(560);
 
         GridPane grid = formGrid();
+        
+        // Tarjeta derecha con el formulario y botones de acción
         VBox form = Ui.card(Ui.sectionTitle("Datos del paciente"), grid, patientActions(newButton, editButton, saveButton, deleteButton));
         form.setMinWidth(390);
         form.setPrefWidth(430);
+        
+        // Contenedor principal que ajusta los tamaños relativos
         HBox body = new HBox(18, tableCard, form);
         HBox.setHgrow(tableCard, Priority.ALWAYS);
         load();
@@ -93,11 +105,13 @@ public class PatientManagementView {
         table.getSelectionModel().selectedItemProperty().addListener((obs, old, value) -> fillForm(value));
     }
 
+    // Grid que organiza los campos del formulario en dos columnas ordenadas
     private GridPane formGrid() {
         genderCombo.setMaxWidth(Double.MAX_VALUE);
         coverageCombo.setMaxWidth(Double.MAX_VALUE);
         birthDatePicker.setMaxWidth(Double.MAX_VALUE);
         Ui.configureBirthDatePicker(birthDatePicker, LocalDate.of(1900, 1, 1), LocalDate.now());
+        
         GridPane grid = new GridPane();
         grid.setHgap(12);
         grid.setVgap(12);
@@ -240,6 +254,7 @@ public class PatientManagementView {
         updateAffiliateState(editable);
     }
 
+    // Habilita el campo de afiliado solo si la cobertura seleccionada es 'OBRA_SOCIAL' y el formulario está en modo edición
     private void updateAffiliateState(boolean editable) {
         boolean requiresAffiliate = coverageCombo.getValue() == TipoCobertura.OBRA_SOCIAL;
         affiliateField.setPromptText(requiresAffiliate ? "Numero afiliado" : "No requiere afiliado");

@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Acceso JDBC para turnos.
- * Incluye consultas de agenda, disponibilidad horaria y cambio de estado.
+   Acceso JDBC para turnos.
+   Incluye consultas de agenda, disponibilidad horaria y cambio de estado.
  */
 public class TurnoDao {
     private final DatabaseConfig databaseConfig;

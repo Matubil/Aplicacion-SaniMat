@@ -26,8 +26,8 @@ import java.time.format.ResolverStyle;
 import java.util.List;
 
 /**
- * Pantalla de historias clinicas.
- * Permite buscar pacientes y cargar o editar el texto clinico asociado.
+   Pantalla de historias clinicas.
+   Permite buscar pacientes y cargar o editar el texto clinico asociado.
  */
 public class ClinicalHistoryView {
     private static final DateTimeFormatter DATE = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -67,7 +67,10 @@ public class ClinicalHistoryView {
     }
 
     public Node getRoot() {
+        // Inicializa la configuración de columnas y selección de la tabla de pacientes
         configurePatientTable();
+        
+        // Configura el área de texto del historial clínico: no editable por defecto y con altura preferida
         historyArea.setEditable(false);
         historyArea.setPrefRowCount(16);
         hideEntryDate();
@@ -90,30 +93,42 @@ public class ClinicalHistoryView {
         cancelEditButton = Ui.secondaryButton("Cancelar");
         cancelEditButton.setOnAction(event -> cancelHistoryEdit());
 
+        // Contenedor horizontal para la barra de búsqueda. El campo de texto se expande para ocupar todo el espacio disponible.
         HBox filter = Ui.actions(filterField, searchButton);
         HBox.setHgrow(filterField, Priority.ALWAYS);
 
+        // Tarjeta lateral izquierda que contiene el filtro de búsqueda y la tabla de selección de pacientes
         VBox patientCard = Ui.card(Ui.sectionTitle("Pacientes"), filter, patientTable);
         patientCard.setMinWidth(360);
         patientCard.setPrefWidth(450);
         Ui.compactTable(patientTable, 12);
+        
+        // Tarjeta resumen del paciente seleccionado
         VBox summaryCard = Ui.card(Ui.sectionTitle("Paciente seleccionado"), patientSummary());
+        
+        // Tarjeta para el visor/editor del historial clínico
         VBox historyCard = Ui.card(Ui.sectionTitle("Historial Clínico"), entryDateLabel, historyArea);
+        
+        // Agrupación vertical de botones de acciones clínicas organizados por filas de HBox
         VBox actions = new VBox(10,
                 historyActions(createHistoryButton, editHistoryButton),
                 historyActions(saveHistoryButton, cancelEditButton),
                 historyActions(reportButton, prescriptionButton)
         );
 
+        // Panel contenedor derecho para el resumen del paciente, el área del historial y las acciones
         VBox historyPanel = new VBox(16, summaryCard, historyCard, actions);
-        VBox.setVgrow(historyCard, Priority.ALWAYS);
-        VBox.setVgrow(historyArea, Priority.ALWAYS);
+        VBox.setVgrow(historyCard, Priority.ALWAYS); // Hace que la tarjeta del historial crezca verticalmente para llenar el espacio
+        VBox.setVgrow(historyArea, Priority.ALWAYS); // Hace que el área de texto crezca para llenar el espacio dentro de la tarjeta
+        
+        // Contenedor principal que organiza la vista en dos columnas (Pacientes a la izquierda, Historial a la derecha)
         HBox body = new HBox(18, patientCard, historyPanel);
         HBox.setHgrow(historyPanel, Priority.ALWAYS);
         loadInitialPatients();
         return Ui.page(Ui.pageTitle("Historial Clínico"), body);
     }
 
+    // Configura la tabla de pacientes con sus columnas específicas y añade el listener de selección
     private void configurePatientTable() {
         patientTable.getColumns().setAll(
                 Ui.column("Paciente", Paciente::getNombreCompleto, 210),
@@ -128,6 +143,7 @@ public class ClinicalHistoryView {
         });
     }
 
+    // Construye un contenedor vertical con el resumen de datos personales del paciente (DNI, cobertura, nacimiento, contacto, dirección)
     private VBox patientSummary() {
         HBox firstRow = new HBox(14,
                 summaryItem("DNI", patientDniLabel),
@@ -141,12 +157,14 @@ public class ClinicalHistoryView {
         return new VBox(12, patientNameLabel, firstRow, secondRow);
     }
 
+    // Helper para crear ítems individuales de información del paciente con etiqueta arriba y valor abajo
     private VBox summaryItem(String label, Label value) {
         VBox box = new VBox(4, Ui.fieldLabel(label), value);
-        HBox.setHgrow(box, Priority.ALWAYS);
+        HBox.setHgrow(box, Priority.ALWAYS); // Permite al elemento expandirse proporcionalmente
         return box;
     }
 
+    // Configura botones para que ocupen todo el ancho horizontal disponible dentro de una fila de acciones
     private HBox historyActions(Button... buttons) {
         HBox box = Ui.actions(buttons);
         for (Button button : buttons) {

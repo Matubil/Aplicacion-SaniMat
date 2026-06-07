@@ -14,8 +14,8 @@ import java.math.RoundingMode;
 import java.util.List;
 
 /**
- * Reglas de negocio para pagos.
- * Calcula descuentos y evita pagos parciales o pagos sobre turnos cancelados.
+   Reglas de negocio para pagos.
+   Calcula descuentos y evita pagos parciales o pagos sobre turnos cancelados.
  */
 public class PagoService {
     private static final BigDecimal PRECIO_CONSULTA = new BigDecimal("25000");
