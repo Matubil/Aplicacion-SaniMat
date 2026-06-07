@@ -30,6 +30,7 @@ public class UsuarioDao {
                        s.secretario_id,
                        NULL::INTEGER AS medico_id,
                        'SECRETARIA' AS rol_nombre,
+                       p.genero,
                        CONCAT(p.apellido, ', ', p.nombre) AS nombre_completo
                 FROM secretarios s
                 JOIN personas p ON p.persona_id = s.persona_id
@@ -42,6 +43,7 @@ public class UsuarioDao {
                        NULL::INTEGER AS secretario_id,
                        m.medico_id,
                        'MEDICO' AS rol_nombre,
+                       p.genero,
                        CONCAT(p.apellido, ', ', p.nombre) AS nombre_completo
                 FROM medicos m
                 JOIN personas p ON p.persona_id = m.persona_id
@@ -63,6 +65,7 @@ public class UsuarioDao {
                 usuario.setMedicoId((Integer) resultSet.getObject("medico_id"));
                 usuario.setSecretarioId((Integer) resultSet.getObject("secretario_id"));
                 usuario.setNombreCompleto(resultSet.getString("nombre_completo"));
+                usuario.setGenero(resultSet.getString("genero"));
 
                 Rol rol = new Rol();
                 rol.setId(0);

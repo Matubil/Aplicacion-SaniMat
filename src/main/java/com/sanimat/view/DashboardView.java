@@ -89,7 +89,7 @@ public class DashboardView {
 
         TableView<Turno> table = appointmentTable(all.stream().limit(12).toList());
         VBox body = new VBox(18, metrics, actions, table);
-        return Ui.page(Ui.pageTitle("Bienvenida " + firstName()), body);
+        return Ui.page(Ui.pageTitle(welcomeTitle()), body);
     }
 
     // Retorna la pantalla de inicio para el Médico con métricas de su agenda de hoy y cola de espera
@@ -112,7 +112,7 @@ public class DashboardView {
                 metric("Proximo paciente", nextPatient));
         TableView<Turno> table = appointmentTable(today.stream().limit(12).toList());
         VBox body = new VBox(18, metrics, table);
-        return Ui.page(Ui.pageTitle("Bienvenido " + firstName()), body);
+        return Ui.page(Ui.pageTitle(welcomeTitle()), body);
     }
 
     // Contenedor para las cards del inicio y hagan wrap automáticamente
@@ -171,5 +171,19 @@ public class DashboardView {
         }
         int comma = name.indexOf(',');
         return comma >= 0 ? name.substring(comma + 1).trim() : name;
+    }
+
+    private String welcomeTitle() {
+        String greeting = isFemale() ? "Bienvenida" : "Bienvenido";
+        if (usuario.hasRole(RoleName.MEDICO)) {
+            String title = isFemale() ? "Dra." : "Dr.";
+            return greeting + " " + title + " " + firstName();
+        }
+        return greeting + " " + firstName();
+    }
+
+    private boolean isFemale() {
+        String gender = usuario.getGenero();
+        return gender != null && gender.trim().equalsIgnoreCase("Femenino");
     }
 }

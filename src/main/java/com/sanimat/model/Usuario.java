@@ -14,6 +14,7 @@ public class Usuario {
     private Integer secretarioId;
     private Integer pacienteId;
     private String nombreCompleto;
+    private String genero;
     private boolean activo = true;
 
     public int getId() {
@@ -86,6 +87,14 @@ public class Usuario {
 
     public void setNombreCompleto(String nombreCompleto) {
         this.nombreCompleto = nombreCompleto;
+    }
+
+    public String getGenero() {
+        return genero;
+    }
+
+    public void setGenero(String genero) {
+        this.genero = genero;
     }
 
     public boolean isActivo() {

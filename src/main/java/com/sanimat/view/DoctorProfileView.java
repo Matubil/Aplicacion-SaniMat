@@ -137,6 +137,7 @@ public class DoctorProfileView {
             medicoService.save(medico);
             usuario.setUsername(medico.getUsuario());
             usuario.setNombreCompleto(medico.getNombreCompleto());
+            usuario.setGenero(medico.getGenero());
             if (afterSave != null) {
                 afterSave.run();
             }
