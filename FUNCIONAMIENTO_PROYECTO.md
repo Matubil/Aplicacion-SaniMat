@@ -5,12 +5,13 @@ La aplicacion SaniMat es un prototipo de escritorio para una clinica medica. Per
 ## Flujo general
 
 1. `MainApp` inicia JavaFX y muestra `LoginView`.
-2. `LoginController` envia usuario y contrasenia a `AuthService`.
-3. `AuthService` consulta credenciales mediante `UsuarioDao`.
-4. Si las credenciales son validas, se crea una sesion y se muestra `MainShell`.
-5. `MainShell` construye el menu lateral segun el rol del usuario.
-6. Cada pantalla JavaFX usa servicios para ejecutar reglas de negocio.
-7. Los servicios usan DAOs para leer y escribir datos en PostgreSQL.
+2. Desde `LoginView` se puede iniciar sesion o abrir el panel de conexion para configurar PostgreSQL.
+3. `LoginController` envia usuario y contrasenia a `AuthService`.
+4. `AuthService` consulta credenciales mediante `UsuarioDao`.
+5. Si las credenciales son validas, se crea una sesion y se muestra `MainShell`.
+6. `MainShell` construye el menu lateral segun el rol del usuario.
+7. Cada pantalla JavaFX usa servicios para ejecutar reglas de negocio.
+8. Los servicios usan DAOs para leer y escribir datos en PostgreSQL.
 
 ## Roles y navegacion
 
@@ -22,7 +23,7 @@ La aplicacion SaniMat es un prototipo de escritorio para una clinica medica. Per
 
 ## Conexion a PostgreSQL
 
-La conexion se configura en:
+La conexion inicial se configura en:
 
 ```text
 src/main/resources/database.properties
@@ -36,7 +37,17 @@ db.user=postgres
 db.password=Maty
 ```
 
-`DatabaseConfig` tambien permite usar variables de entorno:
+La pantalla de login tambien incluye un boton `Conexion`. Desde ahi se pueden ingresar host, puerto, base de datos, usuario y contrasenia. El boton `Probar conexion` ejecuta una consulta simple contra PostgreSQL y muestra una ventana emergente indicando si la conexion fue exitosa o si hubo un error.
+
+Cuando se guardan los datos desde la pantalla de conexion, la aplicacion crea un archivo externo:
+
+```text
+database.properties
+```
+
+Ese archivo queda en la raiz del proyecto y tiene prioridad sobre el archivo incluido en `src/main/resources`.
+
+`DatabaseConfig` tambien permite usar variables de entorno, que tienen prioridad sobre ambos archivos:
 
 ```text
 SANIMAT_DB_URL
@@ -48,7 +59,18 @@ SANIMAT_DB_PASSWORD
 
 El login valida usuarios de secretarios y medicos. La base actual no trae credenciales operativas para pacientes, por eso el acceso de paciente no queda disponible desde la interfaz.
 
-La pantalla de login envia usuario y contrasenia al controlador. Si son correctos, se abre la ventana principal con el menu correspondiente al rol.
+La pantalla de login envia usuario y contrasenia al controlador. Si son correctos, se abre la ventana principal con el menu correspondiente al rol. Si se necesita cambiar la base de datos, se puede usar el panel de conexion antes de iniciar sesion.
+
+## Pantalla principal y metricas
+
+La pantalla de inicio cambia segun el rol:
+
+- La secretaria ve metricas generales, accesos rapidos y una tabla resumen de turnos.
+- El medico ve sus turnos del dia, la cantidad de turnos confirmados pendientes de atencion y el proximo paciente confirmado.
+
+El saludo de bienvenida se adapta al genero cargado en la persona autenticada. Para secretaria o secretario se muestra `Bienvenida` o `Bienvenido`; para medicos se agrega ademas el tratamiento `Dra.` o `Dr.`.
+
+En el dashboard del medico, los turnos finalizados, ausentes o cancelados no se consideran como pacientes en espera ni como proximo paciente. El total de turnos del dia se mantiene como conteo general de agenda, por lo que puede incluir turnos ya finalizados o ausentes.
 
 ## Gestion de especialidades
 
@@ -75,8 +97,9 @@ La secretaria puede:
 
 Validaciones principales:
 
-- DNI obligatorio y numerico.
-- Fecha de nacimiento obligatoria.
+- DNI obligatorio, numerico y de 7 a 8 digitos.
+- Fecha de nacimiento obligatoria, con formato `dd/mm/aaaa`.
+- Para medicos, la fecha de nacimiento debe ser igual o posterior al 01/01/1940 y debe cumplir edad minima de 18 anios.
 - Matricula numerica y unica.
 - Usuario obligatorio y unico.
 - Especialidad obligatoria.
@@ -101,8 +124,9 @@ La secretaria puede:
 
 Validaciones principales:
 
-- DNI obligatorio y numerico.
-- Fecha de nacimiento obligatoria.
+- DNI obligatorio, numerico y de 7 a 8 digitos.
+- Fecha de nacimiento obligatoria, con formato `dd/mm/aaaa`.
+- Para pacientes, la fecha de nacimiento debe ser igual o posterior al 01/01/1900 y no puede ser futura.
 - Tipo de cobertura obligatorio.
 - Email y telefono con formato valido.
 - Nombre, apellido y direccion se normalizan con formato capitalizado.
@@ -121,11 +145,20 @@ Reglas principales:
 - Para cancelar se usa el boton `Cancelar turno`.
 - Un turno cancelado o finalizado ya no se puede modificar.
 - `Ausente` y `Finalizado` se pueden asignar desde modificar cuando la fecha y hora del turno ya pasaron.
+- Las fechas se muestran y cargan con formato `dd/mm/aaaa`.
+- En la vista de secretaria, la tabla se ordena desde el turno mas reciente hacia el mas antiguo.
 
 La disponibilidad se valida en dos lugares:
 
 - En la interfaz, para guiar al usuario.
 - En `TurnoService`, para proteger la regla aunque se intente guardar desde otro flujo.
+
+En la vista del medico, la agenda se divide en dos tablas:
+
+- Turnos confirmados del dia.
+- Turnos cerrados del dia, que incluyen finalizados, ausentes o cancelados.
+
+El medico solo puede actualizar turnos asignados a el. Puede marcar como `Finalizado` o `Ausente` turnos confirmados cuya fecha sea actual o anterior.
 
 ## Registro de pagos
 
@@ -140,6 +173,8 @@ Reglas principales:
 - Tarjeta y transferencia no aplican descuento adicional.
 - Los turnos cancelados no requieren pago.
 - No se permiten pagos parciales: el monto debe coincidir exactamente con el monto calculado.
+- La fecha de pago se carga con formato `dd/mm/aaaa`.
+- Los turnos pendientes y pagos registrados muestran fechas en formato `dd/mm/aaaa`.
 
 Los valores principales se encuentran como constantes en `PagoService`.
 
@@ -151,12 +186,13 @@ El medico puede:
 - Consultar la historia clinica del paciente seleccionado.
 - Crear una nueva entrada clinica.
 - Modificar el contenido del historial existente.
+- Eliminar el historial clinico del paciente seleccionado, previa confirmacion.
 
-La tabla `historias_clinicas` contiene una historia clinica asociada al paciente. Para nuevas entradas, la aplicacion agrega el nuevo bloque fechado dentro de la descripcion existente.
+La tabla `historias_clinicas` contiene una historia clinica asociada al paciente. En el esquema actual, cada paciente posee un registro clinico principal. Para nuevas entradas, la aplicacion agrega un bloque fechado dentro de la descripcion existente, de modo que el historial completo pueda visualizarse junto.
 
 La fecha de una nueva entrada se toma automaticamente desde la fecha actual del sistema y no se edita desde la pantalla. Al modificar el historial, se valida que las fechas escritas tengan formato completo `dd/mm/aaaa`.
 
-La eliminacion de historia clinica no esta implementada actualmente.
+La eliminacion borra el registro de `historias_clinicas` asociado al paciente seleccionado. No elimina al paciente ni sus turnos.
 
 ## Funciones futuras
 
@@ -187,12 +223,11 @@ La eliminacion de historia clinica no esta implementada actualmente.
 | RF-19 | Registrar historia clinica | Cumple | Permite crear una entrada clinica para un paciente. |
 | RF-20 | Consultar historia clinica | Cumple | Permite seleccionar paciente y ver su historial. |
 | RF-21 | Modificar historia clinica | Cumple | Permite editar el contenido del historial existente. |
-| RF-22 | Eliminar historia clinica | No implementado | No hay boton, metodo de servicio ni metodo DAO para eliminar historias clinicas. |
+| RF-22 | Eliminar historia clinica | Cumple | El medico puede eliminar el historial clinico del paciente seleccionado con confirmacion previa. |
 
 ## Conclusion de cumplimiento
 
 El prototipo cumple la mayor parte de los requerimientos funcionales planteados. Los puntos a declarar como parciales o fuera de alcance son:
 
 - El rol paciente esta modelado, pero no tiene acceso completo desde la interfaz porque la base actual no trae credenciales de pacientes.
-- La eliminacion de historia clinica no esta implementada.
 - Recetas y reportes quedan como ampliaciones futuras, no como funcionalidades activas.

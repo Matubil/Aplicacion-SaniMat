@@ -9,7 +9,7 @@ Este proyecto es una aplicacion de escritorio academica desarrollada con Java ba
 | `pom.xml` | Configuracion Maven del proyecto. Define Java 21, JavaFX y el driver JDBC de PostgreSQL. |
 | `README.md` | Resumen general del proyecto, requisitos y comandos basicos de ejecucion. |
 | `database/schema.sql` | Script principal para crear tablas, enumeraciones, restricciones, datos iniciales y vistas de consulta. |
-| `database/validacion_horarios_laborales_media_hora.sql` | Script auxiliar para validar que los horarios laborales usen bloques redondos o de media hora. |
+| `database.properties` | Archivo opcional generado desde la pantalla de conexion. Si existe, sobrescribe la configuracion incluida en recursos. |
 | `src/main/java` | Codigo fuente Java organizado por paquetes. |
 | `src/main/resources` | Configuracion de base de datos y estilos JavaFX. |
 | `target` | Carpeta generada por compilaciones. No contiene codigo fuente. |
@@ -42,7 +42,7 @@ Contiene clases de configuracion y estado de sesion.
 
 | Clase | Responsabilidad |
 | --- | --- |
-| `DatabaseConfig` | Lee `database.properties`, permite variables de entorno y crea conexiones JDBC a PostgreSQL. |
+| `DatabaseConfig` | Lee la configuracion incluida, permite un `database.properties` externo, acepta variables de entorno, prueba la conexion y crea conexiones JDBC a PostgreSQL. |
 | `Session` | Mantiene el usuario autenticado durante la ejecucion. |
 
 ## `controller`
@@ -65,7 +65,7 @@ Contiene el acceso a datos. Estas clases ejecutan SQL mediante JDBC y `PreparedS
 | `PacienteDao` | Consulta, registra, modifica y elimina pacientes junto con sus datos personales. |
 | `TurnoDao` | Consulta, registra, modifica y cancela turnos. Tambien valida disponibilidad y horarios laborales. |
 | `PagoDao` | Consulta y registra pagos. |
-| `HistoriaClinicaDao` | Consulta, registra y modifica historias clinicas. |
+| `HistoriaClinicaDao` | Consulta, registra, modifica y elimina la historia clinica asociada a un paciente. |
 | `DaoException` | Excepcion propia para errores de acceso a datos. |
 
 ## `model`
@@ -81,9 +81,9 @@ Contiene entidades y enumeraciones del dominio.
 | `Especialidad` | Especialidad medica con nombre y descripcion. |
 | `Turno` | Turno asignado a paciente y medico, con fecha, hora, estado y pago. |
 | `Pago` | Pago asociado a un turno. |
-| `HistoriaClinica` | Registro clinico asociado a un paciente. |
+| `HistoriaClinica` | Registro clinico asociado a un paciente, con fecha y descripcion. |
 | `HorarioMedico` | Dia y rango horario laboral de un medico. |
-| `Usuario`, `Rol`, `RoleName` | Modelo de usuario autenticado y roles. |
+| `Usuario`, `Rol`, `RoleName` | Modelo de usuario autenticado, genero y roles. |
 | `EstadoTurno` | Estados posibles de un turno: confirmado, cancelado, ausente y finalizado. |
 | `TipoCobertura` | Tipos de cobertura del paciente. |
 | `MedioPago` | Medios de pago disponibles. |
@@ -100,7 +100,7 @@ Contiene validaciones y reglas de negocio. La vista no deberia decidir reglas im
 | `PacienteService` | Valida datos personales, DNI unico, cobertura y dependencias. |
 | `TurnoService` | Valida alta, modificacion, cancelacion, disponibilidad, superposicion y horarios laborales. |
 | `PagoService` | Calcula monto esperado, aplica descuentos y evita pagos parciales. |
-| `HistoriaClinicaService` | Valida paciente, fecha y descripcion de historia clinica. |
+| `HistoriaClinicaService` | Valida paciente, fecha, descripcion y baja de historia clinica. |
 
 ## `util`
 
@@ -108,7 +108,7 @@ Contiene utilidades reutilizables.
 
 | Clase | Responsabilidad |
 | --- | --- |
-| `Validator` | Validaciones comunes: obligatorio, DNI, email, telefono, matricula, fecha futura y montos positivos. |
+| `Validator` | Validaciones comunes: campos obligatorios, DNI de 7 a 8 digitos, email, telefono, matricula, fechas y montos positivos. |
 | `ValidationException` | Excepcion propia para errores de validacion de negocio. |
 | `TextNormalizer` | Normaliza textos, por ejemplo capitalizando nombres y apellidos. |
 | `PasswordUtil` | Compara credenciales ingresadas con las guardadas. |
@@ -120,7 +120,7 @@ Contiene las pantallas JavaFX y componentes visuales.
 
 | Clase | Responsabilidad |
 | --- | --- |
-| `LoginView` | Pantalla de inicio de sesion. |
+| `LoginView` | Pantalla de inicio de sesion y configuracion/test de conexion a PostgreSQL. |
 | `MainShell` | Ventana principal, barra lateral, navegacion por rol y contenedor de vistas. |
 | `DashboardView` | Pantalla inicial con metricas y resumen de turnos. |
 | `SpecialtyManagementView` | Gestion de especialidades. |
@@ -129,7 +129,7 @@ Contiene las pantallas JavaFX y componentes visuales.
 | `PatientManagementView` | Gestion de pacientes. |
 | `AppointmentManagementView` | Gestion y consulta de turnos. |
 | `PaymentView` | Registro y consulta de pagos. |
-| `ClinicalHistoryView` | Consulta, alta y modificacion de historia clinica. |
+| `ClinicalHistoryView` | Consulta, alta, modificacion y eliminacion de historia clinica. |
 | `PlaceholderView` | Pantalla para funcionalidades futuras, como recetas. |
 | `Ui` | Fabrica de controles, tablas, botones, tarjetas y estilos comunes. |
 
@@ -137,8 +137,10 @@ Contiene las pantallas JavaFX y componentes visuales.
 
 | Archivo | Contenido |
 | --- | --- |
-| `src/main/resources/database.properties` | URL, usuario y contrasenia de PostgreSQL. |
+| `src/main/resources/database.properties` | Configuracion inicial de URL, usuario y contrasenia de PostgreSQL. |
 | `src/main/resources/styles/sanimat.css` | Estilos visuales de la aplicacion JavaFX. |
+
+La configuracion de conexion puede modificarse desde la aplicacion. Cuando se guarda desde la pantalla de login, se crea un `database.properties` externo en la raiz del proyecto, que tiene prioridad sobre el archivo incluido en `src/main/resources`.
 
 ## Base de datos
 
@@ -154,7 +156,9 @@ El script `database/schema.sql` define, entre otras, las siguientes tablas:
 | `horarios_laborales` | Dias y rangos horarios de atencion de medicos. |
 | `turnos` | Agenda de turnos. |
 | `pagos` | Pagos registrados para turnos. |
-| `historias_clinicas` | Historia clinica asociada a pacientes. |
+| `historias_clinicas` | Historia clinica asociada a pacientes. En el esquema actual cada paciente posee un registro clinico principal. |
 | `enum_estado_turno` | Catalogo de estados de turno. |
 | `enum_tipo_cobertura` | Catalogo de coberturas. |
 | `enum_medio_pago` | Catalogo de medios de pago. |
+
+La restriccion de media hora para `horarios_laborales` se encuentra integrada en `database/schema.sql` mediante el constraint `chk_horario_laboral_media_hora`.
