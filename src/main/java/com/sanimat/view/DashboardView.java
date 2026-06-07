@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
-   Pantalla inicial despues del login.
-   Muestra metricas y accesos rapidos distintos segun el rol del usuario.
+ * Pantalla inicial despues del login.
+ * Muestra metricas y accesos rapidos distintos segun el rol del usuario.
  */
 public class DashboardView {
     private static final DateTimeFormatter TIME = DateTimeFormatter.ofPattern("HH:mm");
@@ -44,8 +44,7 @@ public class DashboardView {
             PacienteService pacienteService,
             MedicoService medicoService,
             PagoService pagoService,
-            Consumer<String> navigate
-    ) {
+            Consumer<String> navigate) {
         this.usuario = usuario;
         this.turnoService = turnoService;
         this.pacienteService = pacienteService;
@@ -59,7 +58,8 @@ public class DashboardView {
         return usuario.hasRole(RoleName.MEDICO) ? doctorHome() : secretaryHome();
     }
 
-    // Retorna la pantalla de inicio para la Secretaria con accesos rápidos y métricas globales
+    // Retorna la pantalla de inicio para la Secretaria con accesos rápidos y
+    // métricas globales
     private Node secretaryHome() {
         List<Turno> today = turnoService.search(null, LocalDate.now(), usuario);
         List<Turno> all = turnoService.search(null, null, usuario);
@@ -69,35 +69,38 @@ public class DashboardView {
                 .distinct()
                 .count();
 
-        // FlowPane organiza las tarjetas de KPIs de forma fluida según el ancho disponible
+        // FlowPane organiza las tarjetas/ cards de forma fluida según el ancho
+        // disponible
         FlowPane metrics = metrics(
                 metric("Total de turnos en el dia", String.valueOf(today.size())),
                 metric("Pacientes con turno hoy", String.valueOf(patientsWithAppointmentToday)),
                 metric("Pendientes de pago", "$ " + (pagoService.findUnpaidAppointments().size() * 5000)),
                 metric("Medicos disponibles hoy", String.valueOf(countDoctorsWorkingToday(doctors))),
                 metric("Total de pacientes", String.valueOf(pacienteService.findAll(null).size())),
-                metric("Total de Medicos", String.valueOf(doctors.size()))
-        );
+                metric("Total de Medicos", String.valueOf(doctors.size())));
 
         HBox actions = Ui.actions(
                 action("Nuevo Turno", "TURNOS"),
                 action("Nuevo Paciente", "PACIENTES"),
-                futureAction("Crear Factura", "La generacion de facturas no forma parte del alcance implementado en esta version del prototipo. Queda contemplada como una posible ampliacion futura del sistema."),
-                futureAction("Reportes", "La generacion de reportes no forma parte del alcance implementado en esta version del prototipo. Queda contemplada como una posible ampliacion futura del sistema.")
-        );
+                futureAction("Crear Factura",
+                        "La generacion de facturas no forma parte del alcance implementado en esta version del prototipo. Queda contemplada como una posible ampliacion futura del sistema."),
+                futureAction("Reportes",
+                        "La generacion de reportes no forma parte del alcance implementado en esta version del prototipo. Queda contemplada como una posible ampliacion futura del sistema."));
 
         TableView<Turno> table = appointmentTable(all.stream().limit(12).toList());
         VBox body = new VBox(18, metrics, actions, table);
         return Ui.page(Ui.pageTitle("Bienvenida " + firstName()), body);
     }
 
-    // Retorna la pantalla de inicio para el Médico con métricas de su agenda de hoy y cola de espera
+    // Retorna la pantalla de inicio para el Médico con métricas de su agenda de hoy
+    // y cola de espera
     private Node doctorHome() {
         List<Turno> all = turnoService.search(null, null, usuario);
         List<Turno> today = turnoService.search(null, LocalDate.now(), usuario);
         long waiting = all.stream().filter(t -> t.getEstado() == EstadoTurno.CONFIRMADO).count();
         String nextPatient = all.stream()
-                .filter(t -> t.getFechaHora().toLocalDate().isEqual(LocalDate.now()) || t.getFechaHora().toLocalDate().isAfter(LocalDate.now()))
+                .filter(t -> t.getFechaHora().toLocalDate().isEqual(LocalDate.now())
+                        || t.getFechaHora().toLocalDate().isAfter(LocalDate.now()))
                 .min(Comparator.comparing(Turno::getFechaHora))
                 .map(Turno::getPacienteNombre)
                 .orElse("-");
@@ -106,14 +109,13 @@ public class DashboardView {
         FlowPane metrics = metrics(
                 metric("Total de turnos en el dia", String.valueOf(today.size())),
                 metric("En espera", String.valueOf(waiting)),
-                metric("Proximo paciente", nextPatient)
-        );
+                metric("Proximo paciente", nextPatient));
         TableView<Turno> table = appointmentTable(all.stream().limit(12).toList());
         VBox body = new VBox(18, metrics, table);
         return Ui.page(Ui.pageTitle("Bienvenido " + firstName()), body);
     }
 
-    // Contenedor FlowPane para que las tarjetas de KPIs hagan wrap automáticamente
+    // Contenedor para las cards del inicio y hagan wrap automáticamente
     private FlowPane metrics(VBox... cards) {
         FlowPane pane = new FlowPane(18, 18, cards);
         pane.setPrefWrapLength(900);
@@ -157,8 +159,7 @@ public class DashboardView {
                 Ui.column("Obra Social", Turno::getTipoCoberturaDisplay, 120),
                 Ui.column("Medico", Turno::getMedicoNombre, 175),
                 Ui.column("Estado", t -> t.getEstado().getDisplayName(), 115),
-                Ui.column("Horario", t -> t.getFechaHora().format(TIME), 95)
-        );
+                Ui.column("Horario", t -> t.getFechaHora().format(TIME), 95));
         Ui.compactTable(table, 10);
         return table;
     }
