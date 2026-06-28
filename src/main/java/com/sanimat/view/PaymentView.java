@@ -66,6 +66,8 @@ public class PaymentView {
         summaryArea.setPrefRowCount(4);
         summaryArea.setMaxHeight(118);
         summaryArea.getStyleClass().add("payment-summary");
+        amountField.setEditable(false);
+        amountField.setFocusTraversable(false);
         Ui.decimalOnly(amountField);
 
         Button refreshButton = Ui.secondaryButton("Actualizar");
@@ -139,8 +141,8 @@ public class PaymentView {
         grid.setHgap(12);
         grid.setVgap(12);
         grid.add(Ui.formRow("Turno sin pago", appointmentCombo), 0, 0);
-        grid.add(Ui.formRow("Monto", amountField), 0, 1);
-        grid.add(Ui.formRow("Medio de pago", paymentMethodCombo), 0, 2);
+        grid.add(Ui.formRow("Medio de pago", paymentMethodCombo), 0, 1);
+        grid.add(Ui.formRow("Monto a abonar", amountField), 0, 2);
         grid.add(Ui.formRow("Fecha", paymentDatePicker), 0, 3);
         return grid;
     }
