@@ -424,7 +424,7 @@ public class DoctorManagementView {
     private static List<LocalTime> timeOptions() {
         List<LocalTime> times = new ArrayList<>();
         LocalTime time = LocalTime.of(7, 0);
-        while (!time.isAfter(LocalTime.of(20, 0))) {
+        while (!time.isAfter(LocalTime.of(21, 0))) {
             times.add(time);
             time = time.plusMinutes(30);
         }
