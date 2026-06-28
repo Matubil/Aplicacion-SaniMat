@@ -6,6 +6,7 @@ import com.sanimat.model.Usuario;
 import com.sanimat.view.LoginView;
 import com.sanimat.view.MainShell;
 import javafx.application.Application;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -27,17 +28,38 @@ public class MainApp extends Application {
 
     public void showLogin() {
         Session.clear();
-        Scene scene = new Scene(new LoginView(this, databaseConfig).getRoot(), 1120, 700);
-        applyStyles(scene);
-        stage.setScene(scene);
+        showRoot(new LoginView(this, databaseConfig).getRoot(), 1120, 700, false);
     }
 
     public void showMain(Usuario usuario) {
         Session.setCurrentUser(usuario);
-        Scene scene = new Scene(new MainShell(this, databaseConfig, usuario), 1280, 760);
-        applyStyles(scene);
-        stage.setScene(scene);
-        stage.centerOnScreen();
+        showRoot(new MainShell(this, databaseConfig, usuario), 1280, 760, true);
+    }
+
+    private void showRoot(Parent root, double width, double height, boolean centerWhenWindowed) {
+        boolean wasMaximized = stage.isMaximized();
+        boolean wasFullScreen = stage.isFullScreen();
+        Scene scene = stage.getScene();
+        if (scene == null) {
+            scene = new Scene(root, width, height);
+            applyStyles(scene);
+            stage.setScene(scene);
+        } else {
+            scene.setRoot(root);
+        }
+        if (wasMaximized) {
+            stage.setMaximized(true);
+        }
+        if (wasFullScreen) {
+            stage.setFullScreen(true);
+        }
+        if (!wasMaximized && !wasFullScreen) {
+            stage.setWidth(width);
+            stage.setHeight(height);
+            if (centerWhenWindowed) {
+                stage.centerOnScreen();
+            }
+        }
     }
 
     private void applyStyles(Scene scene) {
